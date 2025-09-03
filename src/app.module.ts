@@ -13,13 +13,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bullmq';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
-import { SettingModule } from './setting/setting.module';
 import { HttpModule } from '@nestjs/axios';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { PublicationModule } from './publication/publication.module';
-import { AuthorModule } from './author/author.module';
-import { CategoryModule } from './category/category.module';
-import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -72,11 +67,6 @@ import { ProductModule } from './product/product.module';
     AuthModule,
     RoleModule,
     PermissionModule,
-    SettingModule,
-    PublicationModule,
-    AuthorModule,
-    CategoryModule,
-    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

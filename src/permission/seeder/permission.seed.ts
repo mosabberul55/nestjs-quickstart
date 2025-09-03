@@ -27,8 +27,18 @@ export class PermissionSeeder implements Seeder {
       };
     });
 
-    //insert permissions. if permissions already exist, it will not insert into the database
-    await this.permissionModel.insertMany(permissions, { ordered: false });
+    // Insert permissions only if they don't already exist (idempotent)
+    // We consider `resource` as the unique key for a permission document.
+    // For each resource, create the document if missing; if it exists, do nothing.
+    await this.permissionModel.bulkWrite(
+      permissions.map((permission) => ({
+        updateOne: {
+          filter: { resource: permission.resource },
+          update: { $setOnInsert: permission },
+          upsert: true,
+        },
+      })),
+    );
     //create default roles with all permissions
     const superAdminRole = {
       name: 'Super Admin',
@@ -37,17 +47,17 @@ export class PermissionSeeder implements Seeder {
         actions: permission.actions,
       })),
     };
-    const agentRole = {
-      name: 'User',
+    const adminRole = {
+      name: 'Admin',
       permissions: permissions.map((permission) => ({
         resource: permission.resource,
         actions: permission.actions.filter(
-          (action) => action !== Action.CREATE && action !== Action.UPDATE,
+          (action) => action !== Action.MANAGE,
         ), // User cannot create or update
       })),
     };
     //insert roles into the database
-    await this.roleModel.insertMany([superAdminRole, agentRole], {
+    await this.roleModel.insertMany([superAdminRole, adminRole], {
       ordered: false,
     });
     //get the super admin role from the database
