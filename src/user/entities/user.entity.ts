@@ -23,9 +23,6 @@ export class User extends Document {
   @Prop({ required: true, type: String })
   password: string;
 
-  @Prop({ required: false, unique: true })
-  referralCode?: string;
-
   @Prop({ required: false, default: null, type: Date })
   phoneVerifiedAt?: Date;
 

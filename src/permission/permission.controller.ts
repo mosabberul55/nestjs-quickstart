@@ -22,7 +22,7 @@ import { Permissions } from '../decorators/permissions.decorator';
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 
-  @Permissions([{ resource: Resource.PERMISSION, actions: [Action.CREATE] }])
+  @Permissions([{ resource: Resource.PERMISSION, actions: [Action.MANAGE] }])
   @Post()
   create(@Body() createPermissionDto: CreatePermissionDto) {
     return this.permissionService.create(createPermissionDto);
@@ -38,7 +38,7 @@ export class PermissionController {
   findOne(@Param('id') id: string) {
     return this.permissionService.findOne(+id);
   }
-  @Permissions([{ resource: Resource.PERMISSION, actions: [Action.UPDATE] }])
+  @Permissions([{ resource: Resource.PERMISSION, actions: [Action.MANAGE] }])
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -46,7 +46,7 @@ export class PermissionController {
   ) {
     return this.permissionService.update(+id, updatePermissionDto);
   }
-  @Permissions([{ resource: Resource.PERMISSION, actions: [Action.DELETE] }])
+  @Permissions([{ resource: Resource.PERMISSION, actions: [Action.MANAGE] }])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.permissionService.remove(+id);

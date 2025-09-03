@@ -23,7 +23,7 @@ import { Action } from '../permission/enums/action.enum';
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
-  @Permissions([{ resource: Resource.ROLE, actions: [Action.CREATE] }])
+  @Permissions([{ resource: Resource.ROLE, actions: [Action.MANAGE] }])
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
@@ -48,12 +48,12 @@ export class RoleController {
   findOne(@Param('id') id: string) {
     return this.roleService.findOne(id);
   }
-  @Permissions([{ resource: Resource.ROLE, actions: [Action.UPDATE] }])
+  @Permissions([{ resource: Resource.ROLE, actions: [Action.MANAGE] }])
   @Put(':id')
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(id, updateRoleDto);
   }
-  @Permissions([{ resource: Resource.ROLE, actions: [Action.DELETE] }])
+  @Permissions([{ resource: Resource.ROLE, actions: [Action.MANAGE] }])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.roleService.remove(id);
