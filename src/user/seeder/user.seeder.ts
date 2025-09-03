@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../entities/user.entity';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { UserTypeEnum } from '../enums/user-type.enum';
 
 @Injectable()
 export class UserSeeder implements Seeder {
@@ -21,6 +22,7 @@ export class UserSeeder implements Seeder {
         phone: '01500000000',
         password: await bcrypt.hash('123456', 10),
         isSuperAdmin: true,
+        type: UserTypeEnum.ADMIN,
       });
       await superAdmin.save();
     }

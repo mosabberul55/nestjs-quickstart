@@ -56,24 +56,27 @@ export class PermissionSeeder implements Seeder {
         ), // User cannot create or update
       })),
     };
-    //insert roles into the database
-    await this.roleModel.insertMany([superAdminRole, adminRole], {
-      ordered: false,
-    });
-    //get the super admin role from the database
+    // Upsert roles and sync their permissions by name
+    const roleUpserts = [superAdminRole, adminRole].map((role) =>
+      this.roleModel.updateOne(
+        { name: role.name },
+        { $set: { permissions: role.permissions } },
+        { upsert: true },
+      ),
+    );
+    await Promise.all(roleUpserts);
+
+    // get the super admin role from the database
     const superAdminRoleDoc = await this.roleModel.findOne({
       name: 'Super Admin',
     });
-    //assign super admin role to the user in the database where isSuperAdmin is true
-    const superAdminUser = await this.userModel.findOne({
-      isSuperAdmin: true,
-    });
-    if (superAdminUser) {
-      if (superAdminRoleDoc?._id) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        superAdminUser.roles.push(superAdminRoleDoc._id as any);
-      }
-      await superAdminUser.save();
+
+    // assign super admin role to all users where isSuperAdmin is true, avoiding duplicates
+    if (superAdminRoleDoc?._id) {
+      await this.userModel.updateMany(
+        { isSuperAdmin: true },
+        { $addToSet: { roles: superAdminRoleDoc._id as any } },
+      );
     }
   }
 

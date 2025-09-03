@@ -12,6 +12,7 @@ import { PermissionDto } from '../role/dto/create-role.dto';
 import { AuthService } from '../auth/auth.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class AuthorizationGuard implements CanActivate {
     private authService: AuthService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
-  // private readonly logger = new Logger(AuthorizationGuard.name);
+  private readonly logger = new Logger(AuthorizationGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<{ userId?: string }>();
@@ -53,6 +54,12 @@ export class AuthorizationGuard implements CanActivate {
     try {
       let userPermissions = await this.cacheManager.get(
         `user-permissions:${userId}`,
+      );
+      //log
+      this.logger.log(
+        `User Permissions for userId ${userId}: ${JSON.stringify(
+          userPermissions,
+        )}`,
       );
       if (!userPermissions) {
         userPermissions = await this.authService.getUserPermissions(userId);
